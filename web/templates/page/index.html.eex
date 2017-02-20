@@ -1,0 +1,4 @@
+<%= if @current_user do %>
+  <ul id="chat"></ul>
+  <input type="text" id="chat-input" />
+<% end %>
