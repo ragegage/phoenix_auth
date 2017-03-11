@@ -1,5 +1,7 @@
 defmodule LoginApp.RoomChannel do
   use Phoenix.Channel
+  alias LoginApp.User
+  alias LoginApp.Repo
 
   def join("members_only", _message, socket) do
     {:ok, socket}
@@ -9,7 +11,8 @@ defmodule LoginApp.RoomChannel do
   end
 
   def handle_in("new_msg", %{"body" => body}, socket) do
-    broadcast! socket, "new_msg", %{body: body}
+    user = Repo.get!(User, socket.assigns.user)
+    broadcast! socket, "new_msg", %{body: body, user: user.email}
     {:noreply, socket}
   end
 end

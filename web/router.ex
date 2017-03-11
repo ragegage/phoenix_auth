@@ -13,6 +13,7 @@ defmodule LoginApp.Router do
     plug Guardian.Plug.VerifySession
     plug Guardian.Plug.LoadResource
     plug LoginApp.CurrentUser
+    plug :put_user_token
   end
 
   pipeline :login_required do
@@ -37,6 +38,15 @@ defmodule LoginApp.Router do
       pipe_through [:login_required]
       
       get "/chat", PageController, :index
+    end
+  end
+
+  defp put_user_token(conn, _) do
+    if current_user = conn.assigns[:current_user] do
+      token = Phoenix.Token.sign(conn, "user socket", current_user.id)
+      assign(conn, :user_token, token)
+    else
+      conn
     end
   end
 
